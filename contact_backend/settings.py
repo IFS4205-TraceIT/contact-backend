@@ -29,6 +29,7 @@ VAULT_SETTINGS = {
     'url': os.environ['VAULT_ADDR'],
     'token': os.environ['VAULT_TOKEN']
 }
+VAULT_TEMP_ID_KEY_PATH = 'contacts/temp_id_key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DJANGO_DEBUG') == "True")
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
     'accounts.apps.AccountsConfig',
+    'contacts.apps.ContactsConfig',
 ]
 
 MIDDLEWARE = [
