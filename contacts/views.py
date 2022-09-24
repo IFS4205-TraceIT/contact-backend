@@ -20,9 +20,10 @@ class GenerateTemporaryIdsView(ListAPIView):
         user_id = request.user.id
         print(type(user_id))
         vault_client = create_vault_client()
-        temp_id_key, start_time = get_or_generate_secret_key(vault_client, settings.VAULT_TEMP_ID_KEY_PATH)
+        temp_id_key = get_or_generate_secret_key(vault_client, settings.VAULT_TEMP_ID_KEY_PATH)
+        temp_ids, start_time = generate_temp_ids(user_id, temp_id_key)
         payload = {
-            'temp_ids': generate_temp_ids(user_id, temp_id_key),
+            'temp_ids': temp_ids,
             'server_start_time': start_time,
         }
         return Response(data=payload, status=status.HTTP_200_OK)
