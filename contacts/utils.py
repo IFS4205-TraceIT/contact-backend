@@ -35,7 +35,7 @@ def generate_temp_ids(uuid: uuid.UUID, key: bytes) -> list[str]:
     '''
     uuid_bytes = uuid.bytes
     temp_ids = []
-    epoch_start = datetime.now()
+    epoch_start = datetime.now() - timedelta(seconds=30)
     epoch_end = epoch_start + timedelta(minutes=15)
 
     for i in range(4 * 6):
@@ -83,7 +83,7 @@ def generate_temp_ids(uuid: uuid.UUID, key: bytes) -> list[str]:
         epoch_start = epoch_end
         epoch_end += timedelta(minutes=15)
 
-    return temp_ids
+    return temp_ids, epoch_start
 
 def decrypt_temp_ids(temp_ids: list[str], key: bytes, user_id: uuid.UUID) -> list[dict]:
     '''
