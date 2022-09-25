@@ -85,29 +85,31 @@ def generate_temp_ids(uuid: uuid.UUID, key: bytes) -> list[str]:
 
     return temp_ids, int(epoch_start.timestamp())
 
-def decrypt_temp_ids(temp_ids: list[str], key: bytes, user_id: uuid.UUID) -> list[dict]:
-    '''
-    Decrypts a list of temporary IDs.
+def decrypt_temp_id(temp_id: dict, key: bytes, user_id: uuid.UUID, user_recent_infection) -> bool:
+    if 'temp_id' not in temp_id or 'contact_timestamp' not in temp_id or 'rssi' not in temp_id:
+        return False
+    temp_id_bytes = b64decode(temp_id['temp_id'])
+    ciphertext = temp_id_bytes[:24]
+    nonce = temp_id_bytes[24:36]
+    tag = temp_id_bytes[36:]
 
-    The temporary IDs are decrypted by decrypting the user ID with AES-256 in GCM mode.
-    '''
-    for temp_id in temp_ids:
-        temp_id_bytes = b64decode(temp_id['temp_id'])
-        ciphertext = temp_id_bytes[:24]
-        nonce = temp_id_bytes[24:36]
-        tag = temp_id_bytes[36:]
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+    plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+    uuid_bytes = plaintext[:16]
+    epoch_start_bytes = plaintext[16:20]
+    epoch_end_bytes = plaintext[20:]
 
-        cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-        plaintext = cipher.decrypt_and_verify(ciphertext, tag)
-        uuid_bytes = plaintext[:16]
-        # epoch_start_bytes = plaintext[16:20]
-        # epoch_end_bytes = plaintext[20:]
+    contact_uuid = uuid.UUID(bytes=uuid_bytes)
+    epoch_start = int.from_bytes(epoch_start_bytes, 'big')
+    epoch_end = int.from_bytes(epoch_end_bytes, 'big')
+    if not (epoch_start <= temp_id['contact_timestamp'] <= epoch_end):
+        print('lmao')
+        return False
 
-        uuid = uuid.UUID(bytes=uuid_bytes)
-        # epoch_start = int.from_bytes(epoch_start_bytes, 'big')
-        # epoch_end = int.from_bytes(epoch_end_bytes, 'big')
+    temp_id['contact_timestamp'] = datetime.fromtimestamp(temp_id['contact_timestamp'])
+    temp_id['infected_user'] = user_id
+    temp_id['contacted_user'] = contact_uuid
+    temp_id['infectionhistory'] = user_recent_infection
 
-        temp_id['infected_user'] = user_id
-        temp_id['contacted_user'] = uuid
+    return True
 
-    return temp_ids
