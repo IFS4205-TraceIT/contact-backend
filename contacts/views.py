@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from datetime import date, timedelta, datetime
 from rest_framework import status
@@ -25,7 +25,7 @@ class GenerateTemporaryIdsView(ListAPIView):
 
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
+    def list(self, request):
         user_id = request.user.id
         print(type(user_id))
         vault_client = create_vault_client()
@@ -38,12 +38,12 @@ class GenerateTemporaryIdsView(ListAPIView):
         return Response(data=payload, status=status.HTTP_200_OK)
 
 
-class UploadTemporaryIdsView(UpdateAPIView):
+class UploadTemporaryIdsView(CreateAPIView):
 
     permission_classes = (IsAuthenticated,)
     serializer_class = CloseContactSerializer
 
-    def post(self, request):
+    def create(self, request):
         user_id = request.user.id
 
         user_recent_infection_history = Infectionhistory.objects.filter(
@@ -83,7 +83,7 @@ class UploadTemporaryIdsView(UpdateAPIView):
         serial.save()
         latest_notification.save()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class GetInfectionStatusView(APIView):
