@@ -103,7 +103,6 @@ def decrypt_temp_id(temp_id: dict, key: bytes, user_id: uuid.UUID, user_recent_i
     epoch_start = int.from_bytes(epoch_start_bytes, 'big')
     epoch_end = int.from_bytes(epoch_end_bytes, 'big')
     if not (epoch_start <= temp_id['contact_timestamp'] <= epoch_end):
-        print('lmao')
         return False
 
     temp_id['contact_timestamp'] = datetime.fromtimestamp(temp_id['contact_timestamp'])
