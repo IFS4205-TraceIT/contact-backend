@@ -104,7 +104,11 @@ def decrypt_temp_id(temp_id: dict, key: bytes, user_id: uuid.UUID, user_recent_i
     epoch_end = int.from_bytes(epoch_end_bytes, 'big')
     if not (epoch_start <= temp_id['contact_timestamp'] <= epoch_end):
         return False
-
+    
+    # Do not save records that are on themselves.
+    if user_id == contact_uuid:
+        return False
+    
     temp_id['contact_timestamp'] = datetime.fromtimestamp(temp_id['contact_timestamp'])
     temp_id['infected_user'] = user_id
     temp_id['contacted_user'] = contact_uuid
