@@ -32,7 +32,7 @@ def post_login_hook(request: Request, serializer: UserSerializer):
     try:
         Users.objects.get(id=serializer.data['id'])
     except Users.DoesNotExist:
-        return Response(data={'user':{'error':['Invalid User']}}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data={'error':['A user with this username and password was not found.']}, status=status.HTTP_400_BAD_REQUEST)
     
     return Response(serializer.data, status=status.HTTP_200_OK)
 
