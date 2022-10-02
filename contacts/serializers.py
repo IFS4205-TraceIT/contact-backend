@@ -13,3 +13,29 @@ class CloseContactSerializer(serializers.ModelSerializer):
         model = Closecontacts
         fields = '__all__'
     
+
+class UserSerializer(serializers.ModelSerializer[Users]):
+    """Handle serialization and deserialization of User objects."""
+
+    class Meta:
+        model = Users
+        fields = (
+            'nric',
+            'name',
+            'dob',
+            'email',
+            'phone',
+            'gender',
+            'address',
+            'postal_code',
+        )
+    
+    def update(self, instance, validated_data):  # type: ignore
+        """Perform an update on a User."""
+
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+
+        instance.save()
+
+        return instance

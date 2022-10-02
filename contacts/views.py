@@ -1,11 +1,10 @@
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
 from datetime import date, timedelta, datetime
 from rest_framework import status
-from django.http import Http404
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
@@ -16,7 +15,8 @@ from .models import (
     Notifications
 )
 from .serializers import (
-    CloseContactSerializer
+    CloseContactSerializer,
+    UserSerializer
 )
 from .utils import get_or_generate_secret_key, generate_temp_ids, decrypt_temp_id
 
@@ -124,3 +124,37 @@ class GetUploadRequirementStatusView(APIView):
         if Notifications.objects.filter(infection__user_id=user_id, start_date__lte=date.today(), due_date__gte=date.today(), uploaded_status=False).exists():
             return Response(data={'status': True}, status=status.HTTP_200_OK)
         return Response(data={'status': False}, status=status.HTTP_200_OK)
+
+
+class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+
+    def retrieve(self, request) -> Response:
+        """Return user on GET request."""
+        queryset = UserSerializer.Meta.model.objects.all()
+        user = get_object_or_404(queryset, id=request.user.id)
+        serializer = self.serializer_class(user, context={'request': request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK) 
+
+    def update(self, request) -> Response:
+        """Return updated user."""
+        serializer_data = request.data
+        
+        queryset = UserSerializer.Meta.model.objects.all()
+        user = get_object_or_404(queryset, id=request.user.id)
+
+        serializer_data['phone'] = request.user.phone_number
+        serializer_data['email'] = request.user.email
+
+        if 'nric' in serializer_data:
+            raise ValidationError('nric cannot be updated')
+
+        serializer = self.serializer_class(
+            user, data=serializer_data, partial=True, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

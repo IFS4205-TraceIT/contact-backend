@@ -4,7 +4,8 @@ from .views import (
     GenerateTemporaryIdsView,
     UploadTemporaryIdsView,
     GetInfectionStatusView,
-    GetUploadRequirementStatusView
+    GetUploadRequirementStatusView,
+    UserRetrieveUpdateAPIView
 )
 
 app_name = 'contacts'
@@ -14,4 +15,5 @@ urlpatterns = [
     path('upload', UploadTemporaryIdsView.as_view()),
     path('upload/status', GetUploadRequirementStatusView.as_view()),
     path('status', GetInfectionStatusView.as_view()),
+    path('user', UserRetrieveUpdateAPIView.as_view()),
 ]

@@ -1,4 +1,5 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from accounts.hooks import check_user
 
 class TwoFactorAuthentication(JWTAuthentication):
     def authenticate(self, request):
@@ -11,6 +12,9 @@ class TwoFactorAuthentication(JWTAuthentication):
 
         user, validated_token = values
         if ('verified_otp' not in validated_token) or (not validated_token['verified_otp']):
+            return None
+        
+        if not check_user(user):
             return None
 
         return user, validated_token
