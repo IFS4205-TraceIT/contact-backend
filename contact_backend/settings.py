@@ -27,15 +27,17 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # See https://hvac.readthedocs.io/en/stable/source/hvac_v1.html#hvac.v1.Client.__init__
 VAULT_SETTINGS = {
     'url': os.environ['VAULT_ADDR'],
-    'token': os.environ['VAULT_TOKEN']
+    'token': os.environ['VAULT_TOKEN'],
+    'verify': False
 }
+VAULT_TEMP_ID_KEY_PATH = 'contacts/temp_id_key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DJANGO_DEBUG') == "True")
 
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['traceit-04-i.comp.nus.edu.sg', '.localhost', '127.0.0.1', '[::1]'] if DEBUG else ['traceit-04-i.comp.nus.edu.sg']
 
 
 # Application definition
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
     'accounts.apps.AccountsConfig',
+    'contacts.apps.ContactsConfig',
 ]
 
 MIDDLEWARE = [

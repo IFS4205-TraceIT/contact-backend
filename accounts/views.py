@@ -22,7 +22,10 @@ from .serializers import (
 )
 from .vault import create_vault_client
 from .vault.totp import TOTP
-
+from .hooks import (
+    post_registration_hook,
+    post_login_hook
+)
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -35,7 +38,8 @@ class RegistrationAPIView(APIView):
         serializer = self.serializer_class(data=user_request)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return post_registration_hook(request, serializer)
 
 
 class LoginAPIView(APIView):
@@ -50,8 +54,7 @@ class LoginAPIView(APIView):
         serializer = self.serializer_class(data=user)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        print(serializer.data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return post_login_hook(request, serializer)
 
 
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
