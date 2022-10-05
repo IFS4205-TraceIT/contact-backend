@@ -25,7 +25,8 @@ services:
         sleep 1; \
         echo 'waiting for vault service ...'; \
         done; \
-        vault secrets enable totp \
+        vault secrets enable totp; \
+        vault secrets enable kv-v2 \
         ) & vault server -dev",
       ]
     environment:

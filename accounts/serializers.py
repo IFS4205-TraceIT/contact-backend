@@ -12,12 +12,13 @@ from .vault.totp import TOTP
 
 class RegistrationSerializer(serializers.ModelSerializer[AuthUser]):
     """Serializers registration requests and creates a new user."""
-
+    id = serializers.UUIDField(read_only=True)
     password = serializers.CharField(max_length=128, min_length=8, write_only=True)
 
     class Meta:
         model = AuthUser
         fields = [
+            'id',
             'username',
             'password',
             'email',
@@ -49,6 +50,7 @@ class RegistrationSerializer(serializers.ModelSerializer[AuthUser]):
 
 
 class LoginSerializer(serializers.ModelSerializer[AuthUser]):
+    id = serializers.UUIDField(read_only=True)  
     username = serializers.CharField(max_length=255)
     email = serializers.CharField(max_length=255, read_only=True)
     has_otp = serializers.BooleanField(read_only=True)
@@ -64,7 +66,7 @@ class LoginSerializer(serializers.ModelSerializer[AuthUser]):
 
     class Meta:
         model = AuthUser
-        fields = ['username', 'email', 'has_otp', 'password', 'tokens']
+        fields = ['id', 'username', 'email', 'has_otp', 'password', 'tokens']
 
     def validate(self, data):  # type: ignore
         """Validate and return user login."""
