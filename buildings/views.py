@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from datetime import date
+from datetime import date, timedelta
 from .serializers import BuildingRegisterSerializer
 import qrcode
 import io
@@ -44,12 +44,20 @@ class BuildingAccessRegister (CreateAPIView):
             user = Users.objects.get(id=request.user.id)
         except Users.DoesNotExist:
             raise ValidationError(detail="User does not exist")
+            
+        infection = user.infectionhistory_set.filter( 
+            recorded_timestamp__range=(date.today()-timedelta(days=15),date.today())
+            )
+        if infection.exists():
+            raise ValidationError(detail="Users has been infected positive!")
+
         try:
             buildingaccess = Buildingaccess.objects.get(user=user, building=building)
             raise ValidationError(detail="User already accessed this building")
         except Buildingaccess.DoesNotExist:
-            request.data['user'] =request.user.id
+            request.data['user'] = request.user.id
             buildingaccess = BuildingRegisterSerializer(data=request.data)
             buildingaccess.is_valid(raise_exception=True)
             buildingaccess.save()
-        return Response(status=status.HTTP_201_CREATED)
+
+        return Response(data={'building_name': building.name}, status=status.HTTP_201_CREATED)
