@@ -49,7 +49,7 @@ class BuildingAccessRegister (CreateAPIView):
             recorded_timestamp__range=(date.today()-timedelta(days=15),date.today())
             )
         if infection.exists():
-            raise ValidationError(detail="Users has been infected positive!")
+            return Response(data={'building_name': building.name, 'infected':True}, status=status.HTTP_200_OK)
 
         try:
             buildingaccess = Buildingaccess.objects.get(user=user, building=building)
@@ -60,4 +60,4 @@ class BuildingAccessRegister (CreateAPIView):
             buildingaccess.is_valid(raise_exception=True)
             buildingaccess.save()
 
-        return Response(data={'building_name': building.name}, status=status.HTTP_201_CREATED)
+        return Response(data={'building_name': building.name, 'infected': False}, status=status.HTTP_201_CREATED)
