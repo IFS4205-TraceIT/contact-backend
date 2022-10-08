@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from .serializers import BuildingRegisterSerializer
 import qrcode
 import io
@@ -52,6 +52,7 @@ class BuildingAccessRegister (CreateAPIView):
             return Response(data={'building_name': building.name, 'infected':True}, status=status.HTTP_200_OK)
 
         request.data['user'] = request.user.id
+        request.data['access_timestamp'] = datetime.now()
         buildingaccess = BuildingRegisterSerializer(data=request.data)
         buildingaccess.is_valid(raise_exception=True)
         buildingaccess.save()
