@@ -38,7 +38,7 @@ class BuildingAccessRegister (CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             building = Buildings.objects.get(id=request.data['building'])
-        except Buildings.DoesNotExist:
+        except:
             raise ValidationError(detail="Building does not exist")
         try:
             user = Users.objects.get(id=request.user.id)
