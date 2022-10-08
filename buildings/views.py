@@ -44,7 +44,7 @@ class BuildingAccessRegister (CreateAPIView):
             user = Users.objects.get(id=request.user.id)
         except Users.DoesNotExist:
             raise ValidationError(detail="User does not exist")
-        querydate = 
+            
         infection = user.infectionhistory_set.filter( 
             recorded_timestamp__range=(datetime.combine(date.today(), datetime.min.time())-timedelta(days=15), datetime.today().replace(hour=23, minute=59, second=59, microsecond=999999))
             )
