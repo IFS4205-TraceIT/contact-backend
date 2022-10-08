@@ -51,13 +51,9 @@ class BuildingAccessRegister (CreateAPIView):
         if infection.exists():
             return Response(data={'building_name': building.name, 'infected':True}, status=status.HTTP_200_OK)
 
-        try:
-            buildingaccess = Buildingaccess.objects.get(user=user, building=building)
-            raise ValidationError(detail="User already accessed this building")
-        except Buildingaccess.DoesNotExist:
-            request.data['user'] = request.user.id
-            buildingaccess = BuildingRegisterSerializer(data=request.data)
-            buildingaccess.is_valid(raise_exception=True)
-            buildingaccess.save()
+        request.data['user'] = request.user.id
+        buildingaccess = BuildingRegisterSerializer(data=request.data)
+        buildingaccess.is_valid(raise_exception=True)
+        buildingaccess.save()
 
         return Response(data={'building_name': building.name, 'infected': False}, status=status.HTTP_201_CREATED)
