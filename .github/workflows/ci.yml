@@ -29,8 +29,8 @@ jobs:
         image: postgres
         env:
           POSTGRES_DB: "traceit"
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         
         options: >-
           --health-cmd pg_isready 
@@ -42,8 +42,8 @@ jobs:
         image: postgres
         env:
           POSTGRES_DB: "traceit"
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         
         options: >-
           --health-cmd pg_isready 
@@ -99,13 +99,13 @@ jobs:
           POSTGRES_HOST: "database_main"
           POSTGRES_PORT: "5432"
           POSTGRES_DB: "traceit"
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_AUTH_HOST: "database_auth"
           POSTGRES_AUTH_PORT: "5432"
           POSTGRES_AUTH_DB: "traceit"
-          POSTGRES_AUTH_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_AUTH_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_AUTH_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_AUTH_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           VAULT_ADDR: ${{ env.VAULT_ADDR }}
           VAULT_TOKEN: ${{ secrets.VAULT_ROOT_TOKEN }}
 
@@ -138,12 +138,12 @@ jobs:
           POSTGRES_HOST: "database_main"
           POSTGRES_PORT: "5432"
           POSTGRES_DB: "traceit"
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_AUTH_HOST: "database_auth"
           POSTGRES_AUTH_PORT: "5432"
           POSTGRES_AUTH_DB: "traceit"
-          POSTGRES_AUTH_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_AUTH_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_AUTH_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_AUTH_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           VAULT_ADDR: ${{ env.VAULT_ADDR }}
           VAULT_TOKEN: ${{ secrets.VAULT_ROOT_TOKEN }}
