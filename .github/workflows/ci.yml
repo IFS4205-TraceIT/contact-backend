@@ -3,12 +3,12 @@ on: [push, pull_request]
 
 # Variables
 env:
-  VAULT_ADDR: http://vault:8200
+  VAULT_ADDR: "http://vault:8200"
   VAULT_ROOT_TOKEN: dev-only-token
   VAULT_VERSION: 1.11.4
 
   DJANGO_SECRET_KEY: test
-  DJANGO_DEBUG: True
+  DJANGO_DEBUG: "True"
   POETRY_VERSION: 1.2.0
 
   POSTGRES_HOST: database
@@ -95,7 +95,7 @@ jobs:
           poetry run python manage.py migrate --database main_db
         env:
           DJANGO_DEBUG: ${{ env.DJANGO_DEBUG }}
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          DJANGO_SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
           POSTGRES_HOST: "database_main"
           POSTGRES_PORT: "5432"
           POSTGRES_DB: "traceit"
@@ -107,7 +107,7 @@ jobs:
           POSTGRES_AUTH_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_AUTH_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           VAULT_ADDR: ${{ env.VAULT_ADDR }}
-          VAULT_TOKEN: ${{ secrets.VAULT_ROOT_TOKEN }}
+          VAULT_TOKEN: ${{ env.VAULT_ROOT_TOKEN }}
 
       - name: Download Vault zip
         uses: wei/wget@v1
@@ -134,7 +134,7 @@ jobs:
           poetry run python manage.py test
         env:
           DJANGO_DEBUG: ${{ env.DJANGO_DEBUG }}
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          DJANGO_SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
           POSTGRES_HOST: "database_main"
           POSTGRES_PORT: "5432"
           POSTGRES_DB: "traceit"
@@ -146,4 +146,4 @@ jobs:
           POSTGRES_AUTH_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_AUTH_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           VAULT_ADDR: ${{ env.VAULT_ADDR }}
-          VAULT_TOKEN: ${{ secrets.VAULT_ROOT_TOKEN }}
+          VAULT_TOKEN: ${{ env.VAULT_ROOT_TOKEN }}
