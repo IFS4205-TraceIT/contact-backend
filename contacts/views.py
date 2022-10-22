@@ -20,6 +20,9 @@ from .serializers import (
 )
 from .utils import get_or_generate_secret_key, generate_temp_ids, decrypt_temp_id
 
+import logging
+logger = logging.Logger(__name__)
+
 # Create your views here.
 class GenerateTemporaryIdsView(ListAPIView):
 
@@ -27,7 +30,6 @@ class GenerateTemporaryIdsView(ListAPIView):
 
     def list(self, request):
         user_id = request.user.id
-        print(type(user_id))
         vault_client = create_vault_client()
         temp_id_key = get_or_generate_secret_key(vault_client, settings.VAULT_TEMP_ID_KEY_PATH)
         temp_ids, start_time = generate_temp_ids(user_id, temp_id_key)
@@ -35,6 +37,7 @@ class GenerateTemporaryIdsView(ListAPIView):
             'temp_ids': temp_ids,
             'server_start_time': start_time,
         }
+        logging.info('Generated temporary IDs.', extra={'action': 'generate_temp_ids', 'request': request, 'user_id': user_id})
         return Response(data=payload, status=status.HTTP_200_OK)
 
 
@@ -45,7 +48,7 @@ class UploadTemporaryIdsView(CreateAPIView):
 
     def create(self, request):
         user_id = request.user.id
-
+        logging.info('Upload temporary IDs.', extra={'action': 'upload_temp_ids', 'request': request, 'user_id': user_id})
         user_recent_infection_history = Infectionhistory.objects.filter(
             user_id = user_id,
             recorded_timestamp__range=(
@@ -82,7 +85,7 @@ class UploadTemporaryIdsView(CreateAPIView):
         latest_notification.uploaded_status = True
         serial.save()
         latest_notification.save()
-
+        logging.info('Uploaded temporary IDs.', extra={'action': 'upload_temp_ids', 'request': request, 'user_id': user_id})
         return Response(status=status.HTTP_201_CREATED)
 
 
@@ -92,6 +95,7 @@ class GetInfectionStatusView(APIView):
 
     def get(self, request):
         user_id = request.user.id
+        logging.info('Get infection status.', extra={'action': 'get_infection_status', 'request': request, 'user_id': user_id})
         user_recent_infection_history = Infectionhistory.objects.filter(
             user_id = user_id,
             recorded_timestamp__range=(
@@ -121,6 +125,7 @@ class GetUploadRequirementStatusView(APIView):
 
     def get(self, request):
         user_id = request.user.id
+        logging.info('Get upload requirement status.', extra={'action': 'get_upload_requirement_status', 'request': request, 'user_id': user_id})
         if Notifications.objects.filter(infection__user_id=user_id, start_date__lte=date.today(), due_date__gte=date.today(), uploaded_status=False).exists():
             return Response(data={'status': True}, status=status.HTTP_200_OK)
         return Response(data={'status': False}, status=status.HTTP_200_OK)
@@ -132,6 +137,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
     def retrieve(self, request) -> Response:
         """Return user on GET request."""
+        logging.info('Get user details.', extra={'action': 'get_user', 'request': request, 'user_id': request.user.id})
         queryset = UserSerializer.Meta.model.objects.all()
         user = get_object_or_404(queryset, id=request.user.id)
         serializer = self.serializer_class(user, context={'request': request})
@@ -141,7 +147,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
     def update(self, request) -> Response:
         """Return updated user."""
         serializer_data = request.data
-        
+        logging.info('Update user details.', extra={'action': 'update_user', 'request': request, 'user_id': request.user.id})
         queryset = UserSerializer.Meta.model.objects.all()
         user = get_object_or_404(queryset, id=request.user.id)
 

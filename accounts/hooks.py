@@ -9,6 +9,9 @@ from .serializers import UserSerializer
 from contacts.models import Users
 from contacts.serializers import UserSerializer as ContactUserSerializer
 
+import logging
+logger = logging.Logger(__name__)
+
 def post_registration_hook(request: Request, serializer: UserSerializer):
     """
     This function is called after a user registers.
@@ -21,6 +24,7 @@ def post_registration_hook(request: Request, serializer: UserSerializer):
         AuthUser.objects.get(id=serializer.data['id']).delete()
         return Response(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     contact_serializer.save()
+    logger.info('User registered.', extra={'action': 'register', 'request': request, 'user_id': serializer.data['id']})
     del serializer.data['id']
     returned_data = {**serializer.data, **contact_serializer.data}
     return Response(returned_data, status=status.HTTP_201_CREATED)
@@ -32,8 +36,9 @@ def post_login_hook(request: Request, serializer: UserSerializer):
     try:
         Users.objects.get(id=serializer.data['id'])
     except Users.DoesNotExist:
+        logger.warn('User does not have permission to access this portal.', extra={'action': 'login', 'request': request, 'user_id': serializer.data['id']})
         return Response(data={'error':['A user with this username and password was not found.']}, status=status.HTTP_400_BAD_REQUEST)
-    
+    logger.info('User logged in.', extra={'action': 'login', 'request': request, 'user_id': serializer.data['id']})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
