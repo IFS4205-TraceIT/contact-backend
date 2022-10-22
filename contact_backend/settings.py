@@ -221,7 +221,7 @@ LOGGING = {
     },
     'loggers': {
         'loki': {
-            'handlers': ['console', 'loki'],
+            'handlers': ['console'] if DEBUG else ['console', 'loki'],
             'level': 'INFO',
             'propagate': False,
         }
