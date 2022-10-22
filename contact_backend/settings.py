@@ -196,7 +196,7 @@ SIMPLE_JWT = {
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': not DEBUG,
     'formatters': {
         'json': {
             'format': '%(asctime)s %(message)s',
@@ -223,7 +223,7 @@ LOGGING = {
         'loki': {
             'handlers': ['console'] if DEBUG else ['console', 'loki'],
             'level': 'INFO',
-            'propagate': False,
+            'propagate': DEBUG,
         }
     }
 }
