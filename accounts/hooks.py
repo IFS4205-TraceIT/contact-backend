@@ -10,7 +10,7 @@ from contacts.models import Users
 from contacts.serializers import UserSerializer as ContactUserSerializer
 
 import logging
-logger = logging.Logger(__name__)
+logger = logging.getLogger('loki')
 
 def post_registration_hook(request: Request, serializer: UserSerializer):
     """

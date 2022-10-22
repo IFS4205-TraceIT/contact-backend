@@ -28,7 +28,7 @@ from .hooks import (
 )
 
 import logging
-logger = logging.Logger(__name__)
+logger = logging.getLogger('loki')
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)

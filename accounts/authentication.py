@@ -3,7 +3,7 @@ from accounts.hooks import check_user
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('loki')
 
 class TwoFactorAuthentication(JWTAuthentication):
     def authenticate(self, request):

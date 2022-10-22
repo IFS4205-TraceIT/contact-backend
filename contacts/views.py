@@ -21,7 +21,7 @@ from .serializers import (
 from .utils import get_or_generate_secret_key, generate_temp_ids, decrypt_temp_id
 
 import logging
-logger = logging.Logger(__name__)
+logger = logging.getLogger('loki')
 
 # Create your views here.
 class GenerateTemporaryIdsView(ListAPIView):

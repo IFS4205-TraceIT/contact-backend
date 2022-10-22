@@ -13,7 +13,7 @@ import io
 import base64
 
 import logging
-logger = logging.Logger(__name__)
+logger = logging.getLogger('loki')
 
 # Create your views here.
 
