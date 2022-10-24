@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils import timezone
 from .models import Buildings, Buildingaccess, Users
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
@@ -51,14 +52,14 @@ class BuildingAccessRegister (CreateAPIView):
             raise ValidationError(detail="Building does not exist")
             
         infection = user.infectionhistory_set.filter( 
-            recorded_timestamp__range=(datetime.combine(date.today(), datetime.min.time())-timedelta(days=15), datetime.today().replace(hour=23, minute=59, second=59, microsecond=999999))
+            recorded_timestamp__range=(datetime.combine(date.today(), datetime.min.time(), timezone.now().tzinfo)-timedelta(days=15), timezone.now().replace(hour=23, minute=59, second=59, microsecond=999999))
             )
         if infection.exists():
             logger.info('User has recent infection history.', extra={'action': 'building_access', 'request': request, 'user_id': user.id})
             return Response(data={'building_name': building.name, 'infected':True}, status=status.HTTP_200_OK)
 
         request.data['user'] = request.user.id
-        request.data['access_timestamp'] = datetime.now()
+        request.data['access_timestamp'] = timezone.now()
         buildingaccess = BuildingRegisterSerializer(data=request.data)
         buildingaccess.is_valid(raise_exception=True)
         buildingaccess.save()
