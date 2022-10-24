@@ -16,27 +16,27 @@ class RegistrationTest(TestCase):
 
         res = self.client.post('/auth/register', {
             'username': 'test',
-            'password': 'testtest'
+            'password': '1qwer$#@!'
         }, format='json')
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         
         res = self.client.post('/auth/register', {
             'email': 'test@test.test',
-            'password': 'testtest'
+            'password': '1qwer$#@!'
         }, format='json')
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         
         res = self.client.post('/auth/register', {
             'email': 'test@test.test',
             'username': 'test',
-            'password': 'testtest'
+            'password': '1qwer$#@!'
         }, format='json')
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
         res = self.client.post('/auth/register', {
             'email': 'test@test.test',
             'phone_number': 'test',
-            'password': 'testtest'
+            'password': '1qwer$#@!'
         }, format='json')
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         
@@ -44,7 +44,7 @@ class RegistrationTest(TestCase):
             'email': 'test@test.test',
             'phone_number': 'test',
             'username': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
         }, format='json')
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         
@@ -53,7 +53,7 @@ class RegistrationTest(TestCase):
             'email': 'test@test.test',
             'username': 'test',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'name': 'tom',
             'dob': '1998-10-10',
             'gender': 'm',
@@ -67,7 +67,7 @@ class RegistrationTest(TestCase):
             'email': 'test@test.test',
             'username': 'test',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'nric': 's123456',
             'dob': '1998-10-10',
             'gender': 'm',
@@ -81,7 +81,7 @@ class RegistrationTest(TestCase):
             'email': 'test@test.test',
             'username': 'test',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'nric': 's123456',
             'name': 'tom',
             'gender': 'm',
@@ -95,7 +95,7 @@ class RegistrationTest(TestCase):
             'email': 'test@test.test',
             'username': 'test',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'nric': 's123456',
             'name': 'tom',
             'dob': '1998-10-10',
@@ -109,7 +109,7 @@ class RegistrationTest(TestCase):
             'email': 'test@test.test',
             'username': 'test',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'nric': 's123456',
             'name': 'tom',
             'dob': '1998-10-10',
@@ -123,7 +123,7 @@ class RegistrationTest(TestCase):
             'email': 'test@test.test',
             'username': 'test',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'nric': 's123456',
             'name': 'tom',
             'dob': '1998-10-10',
@@ -139,7 +139,7 @@ class RegistrationTest(TestCase):
             'email': 'test',
             'username': 'test',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'nric': 's123456',
             'name': 'tom',
             'dob': '1998-10-10',
@@ -164,12 +164,27 @@ class RegistrationTest(TestCase):
         }, format='json')
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-        # Invalid birthdate
+        # Password too simple
         res = self.client.post('/auth/register', {
             'email': 'test@test.test',
             'username': 'test',
             'phone_number': 'test',
             'password': 'testtest',
+            'nric': 's123456',
+            'name': 'tom',
+            'dob': '1998-10-10',
+            'gender': 'm',
+            'address': 'a',
+            'postal_code': 'a'
+        }, format='json')
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Invalid birthdate
+        res = self.client.post('/auth/register', {
+            'email': 'test@test.test',
+            'username': 'test',
+            'phone_number': 'test',
+            'password': '1qwer$#@!',
             'nric': 's123456',
             'name': 'tom',
             'dob': 'asdf',
@@ -184,7 +199,7 @@ class RegistrationTest(TestCase):
             'email': 'test@test.test',
             'username': 'test',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'nric': 's123456',
             'name': 'tom',
             'dob': '1998-10-10',
@@ -204,7 +219,7 @@ class LoginTest(TestCase):
             'email': 'test@test.test',
             'username': 'tracer',
             'phone_number': 'test',
-            'password': 'testtest',
+            'password': '1qwer$#@!',
             'nric': 's1234567a',
             'name': 'tom',
             'dob': '1998-10-10',
@@ -216,7 +231,7 @@ class LoginTest(TestCase):
         self.assertEqual(AuthUser.objects.count(), 1)
         self.assertEqual(AuthUser.objects.get().username, 'tracer')
         # Create user with no tracer profile
-        user = AuthUser.objects.create_user('test', 'test@test.test', 'testtest')
+        user = AuthUser.objects.create_user('test', 'test@test.test', '1qwer$#@!')
         user.phone_number = 'test'
         user.save()
     
@@ -259,6 +274,6 @@ class LoginTest(TestCase):
         """Test login with valid data."""
         res = self.client.post('/auth/login', {
             'username': 'tracer',
-            'password': 'testtest'
+            'password': '1qwer$#@!'
         }, format='json')
         self.assertEqual(res.status_code, status.HTTP_200_OK)
