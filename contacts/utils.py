@@ -1,4 +1,5 @@
 from base64 import b64decode, b64encode
+from django.utils import timezone
 from datetime import datetime, timedelta
 import uuid
 from Crypto.Cipher import AES
@@ -35,7 +36,7 @@ def generate_temp_ids(uuid: uuid.UUID, key: bytes) -> list[str]:
     '''
     uuid_bytes = uuid.bytes
     temp_ids = []
-    epoch_start = datetime.now() - timedelta(seconds=30)
+    epoch_start = timezone.now() - timedelta(seconds=30)
     epoch_end = epoch_start + timedelta(minutes=15)
 
     for i in range(4 * 6):

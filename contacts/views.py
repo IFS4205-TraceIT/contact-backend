@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
@@ -52,8 +53,8 @@ class UploadTemporaryIdsView(CreateAPIView):
         user_recent_infection_history = Infectionhistory.objects.filter(
             user_id = user_id,
             recorded_timestamp__range=(
-                date.today() - timedelta(days=15),
-                date.today()
+                timezone.now() - timedelta(days=15),
+                timezone.now()
             ))
         if user_recent_infection_history.count() == 0:
             raise ValidationError('User has no recent infection history')
@@ -65,7 +66,7 @@ class UploadTemporaryIdsView(CreateAPIView):
             raise ValidationError('User has no recent infection history')
         latest_notification = notification.latest('due_date')
 
-        if latest_notification.due_date < datetime.now().date():
+        if latest_notification.due_date < timezone.now().date():
             raise ValidationError('User has no recent infection history')
 
         temp_ids = request.data.get('temp_ids')
@@ -99,8 +100,8 @@ class GetInfectionStatusView(APIView):
         user_recent_infection_history = Infectionhistory.objects.filter(
             user_id = user_id,
             recorded_timestamp__range=(
-                datetime.today() - timedelta(days=15),
-                datetime.today()
+                timezone.now() - timedelta(days=15),
+                timezone.now()
             ))
         if user_recent_infection_history.count() > 0:
             return Response(data={'status': 'positive'}, status=status.HTTP_200_OK)
@@ -108,8 +109,8 @@ class GetInfectionStatusView(APIView):
         user_recent_close_contact_history = Closecontacts.objects.filter(
             contacted_user_id = user_id,
             contact_timestamp__range=(
-                datetime.today() - timedelta(days=15),
-                datetime.today()
+                timezone.now() - timedelta(days=15),
+                timezone.now()
             )
         )
 
