@@ -10,7 +10,7 @@ on:
     - cron: '0 16 * * *' 
 
 jobs:
-  semgrep:
+  sast:
     runs-on: ci
     container: 
       image: returntocorp/semgrep
