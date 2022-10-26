@@ -39,6 +39,7 @@ def post_login_hook(request: Request, serializer: UserSerializer):
         logger.warn('User does not have permission to access this portal.', extra={'action': 'login', 'request': request, 'user_id': serializer.data['id']})
         return Response(data={'error':['A user with this username and password was not found.']}, status=status.HTTP_400_BAD_REQUEST)
     logger.info('User logged in.', extra={'action': 'login', 'request': request, 'user_id': serializer.data['id']})
+    del serializer.data['id']
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

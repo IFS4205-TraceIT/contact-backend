@@ -127,7 +127,7 @@ class GetUploadRequirementStatusView(APIView):
     def get(self, request):
         user_id = request.user.id
         logging.info('Get upload requirement status.', extra={'action': 'get_upload_requirement_status', 'request': request, 'user_id': user_id})
-        if Notifications.objects.filter(infection__user_id=user_id, start_date__lte=date.today(), due_date__gte=date.today(), uploaded_status=False).exists():
+        if Notifications.objects.filter(infection__user_id=user_id, start_date__lte=timezone.now().date(), due_date__gte=timezone.now().date(), uploaded_status=False).exists():
             return Response(data={'status': True}, status=status.HTTP_200_OK)
         return Response(data={'status': False}, status=status.HTTP_200_OK)
 
@@ -147,21 +147,22 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
     def update(self, request) -> Response:
         """Return updated user."""
-        serializer_data = request.data
-        logging.info('Update user details.', extra={'action': 'update_user', 'request': request, 'user_id': request.user.id})
-        queryset = UserSerializer.Meta.model.objects.all()
-        user = get_object_or_404(queryset, id=request.user.id)
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+        # serializer_data = request.data
+        # logging.info('Update user details.', extra={'action': 'update_user', 'request': request, 'user_id': request.user.id})
+        # queryset = UserSerializer.Meta.model.objects.all()
+        # user = get_object_or_404(queryset, id=request.user.id)
 
-        serializer_data['phone'] = request.user.phone_number
-        serializer_data['email'] = request.user.email
+        # serializer_data['phone'] = request.user.phone_number
+        # serializer_data['email'] = request.user.email
 
-        if 'nric' in serializer_data:
-            raise ValidationError('nric cannot be updated')
+        # if 'nric' in serializer_data:
+        #     raise ValidationError('nric cannot be updated')
 
-        serializer = self.serializer_class(
-            user, data=serializer_data, partial=True, context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        # serializer = self.serializer_class(
+        #     user, data=serializer_data, partial=True, context={'request': request}
+        # )
+        # serializer.is_valid(raise_exception=True)
+        # serializer.save()
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
