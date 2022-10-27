@@ -41,6 +41,6 @@ class BuildingAccessRegister (CreateAPIView):
         buildingaccess.is_valid(raise_exception=True)
         buildingaccess.save()
 
-        logger.info('User accessed building.', extra={'action': 'building_access', 'request': request, 'user_id': request.user.id, 'building_id': building.id})
+        logger.info('User accessed building.', extra={'action': 'building_access', 'request': request, 'user_id': request.user.id})
 
         return Response(data={'building_name': building.name, 'infected': False}, status=status.HTTP_201_CREATED)
