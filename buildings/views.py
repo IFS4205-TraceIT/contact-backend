@@ -22,6 +22,8 @@ class BuildingAccessRegister (CreateAPIView):
             user = Users.objects.get(id=request.user.id)
         except Users.DoesNotExist:
             raise ValidationError(detail="User does not exist")
+            
+        logger.info('User accessed building.', extra={'action': 'building_access', 'request': request, 'user_id': request.user.id})
         try:
             building = Buildings.objects.get(id=request.data['building'])
         except:
@@ -32,7 +34,6 @@ class BuildingAccessRegister (CreateAPIView):
             recorded_timestamp__range=(datetime.combine(date.today(), datetime.min.time(), timezone.now().tzinfo)-timedelta(days=15), timezone.now().replace(hour=23, minute=59, second=59, microsecond=999999))
             )
         if infection.exists():
-            logger.info('User has recent infection history.', extra={'action': 'building_access', 'request': request, 'user_id': user.id})
             return Response(data={'building_name': building.name, 'infected':True}, status=status.HTTP_200_OK)
 
         request.data['user'] = request.user.id
@@ -40,7 +41,5 @@ class BuildingAccessRegister (CreateAPIView):
         buildingaccess = BuildingRegisterSerializer(data=request.data)
         buildingaccess.is_valid(raise_exception=True)
         buildingaccess.save()
-
-        logger.info('User accessed building.', extra={'action': 'building_access', 'request': request, 'user_id': request.user.id, 'building_id': building.id})
 
         return Response(data={'building_name': building.name, 'infected': False}, status=status.HTTP_201_CREATED)
